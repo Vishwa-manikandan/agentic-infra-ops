@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  toy-service:
+    build: ./toy_app
+    container_name: toy-service
+    ports:
+      - "8000:8000"
+    logging:
+      driver: "json-file"
+      options:
+        tag: "toy-service"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: chromadb
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./chroma_data:/chroma/chroma
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  log-ingestor:
+    build: ./log_ingestor
+    container_name: log-ingestor
+    depends_on:
+      - loki
+      - chromadb
+    environment:
+      - LOKI_URL=http://loki:3100
+      - CHROMA_URL=http://chromadb:8000
+      - OLLAMA_URL=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

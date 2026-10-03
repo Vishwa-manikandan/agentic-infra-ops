@@ -1,0 +1,7 @@
+# Project Dependencies
+# Use this file for local installation and CI pipelines
+
+requests
+chromadb
+langgraph
+ollama

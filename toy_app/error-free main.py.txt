@@ -1,0 +1,17 @@
+@'
+from fastapi import FastAPI, Response
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST, Counter
+
+app = FastAPI()
+
+REQUEST_COUNT = Counter("http_requests_total", "Total HTTP Requests", ["method", "endpoint", "status"])
+
+@app.get("/")
+def read_root():
+REQUEST_COUNT.labels(method="GET", endpoint="/", status="200").inc()
+return {"status": "ok", "message": "Hello World"}
+
+@app.get("/metrics")
+def metrics():
+return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+'@ | Out-File -Encoding utf8 C:\Users\Vishwa\agentic-infra-ops\toy_app\main.py

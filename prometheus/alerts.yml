@@ -1,0 +1,26 @@
+groups:
+  - name: toy-service-alerts
+    rules:
+      - alert: HighErrorRate
+        expr: >
+          sum(rate(toy_service_requests_total{status="500"}[1m]))
+          /
+          sum(rate(toy_service_requests_total[1m])) > 0.1
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Error rate above 10% on toy-service"
+          description: "5xx ratio has exceeded 10% over the last minute."
+
+      - alert: HighLatency
+        expr: >
+          histogram_quantile(0.95,
+            sum(rate(toy_service_request_duration_seconds_bucket[1m])) by (le)
+          ) > 1
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "p95 latency above 1s on toy-service"
+          description: "95th percentile request latency has exceeded 1 second."
