@@ -1,0 +1,30 @@
+# Dependency and Environment directories
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Application specific
+incidents.jsonl
+*.log
+
+# Vector DB / Local Data
+chroma_db/
+*.sqlite3
+
+# Docker
+.docker/
