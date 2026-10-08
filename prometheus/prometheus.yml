@@ -7,43 +7,10 @@ rule_files:
 
 scrape_configs:
   - job_name: "toy-service"
-  metrics_path: '/metrics'
+    metrics_path: '/metrics'
     static_configs:
       - targets: ["toy-service:8000"]
 
   - job_name: "prometheus"
     static_configs:
       - targets: ["localhost:9090"]
-version: '3.8'
-
-services:
-toy-service:
-build: ./toy_app
-container_name: toy-service
-ports:
-  - "8000:8000"
-networks:
-  - monitoring
-
-prometheus:
-image: prom/prometheus:latest
-container_name: prometheus
-ports:
-  - "9090:9090"
-volumes:
-  - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-networks:
-  - monitoring
-
-networks:
-monitoring:
-driver: bridge
-
-global:
-scrape_interval: 5s
-
-scrape_configs:
-- job_name: 'toy-service'
-metrics_path: '/metrics'
-static_configs:
-  - targets: ['host.docker.internal:8000']

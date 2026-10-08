@@ -1,4 +1,4 @@
-from chromadb import Client
+﻿from chromadb import Client
 import requests
 import time
 import os
@@ -35,7 +35,7 @@ def get_ollama_embedding(text):
 def fetch_error_logs_from_loki():
     """Fetch ERROR logs from Loki since the last check."""
     # Simplified query for demonstration: fetch logs from last 5 minutes with 'ERROR'
-    query = '{container_name="toy-service"} |= "ERROR"'
+    query = '{compose_service="toy-service"} |= "ERROR"'
     params = {
         "query": query,
         "limit": 100,

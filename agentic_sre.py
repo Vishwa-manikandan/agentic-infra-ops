@@ -1,4 +1,4 @@
-"""
+﻿"""
 Agentic Infra-Ops Assistant: Iterative Reasoning Version
 ------------------------------------------------------------
 A LangGraph agent that proactively detects infrastructure incidents and
@@ -88,7 +88,7 @@ class LogQueryTool:
     def detect_anomalies(self, window_minutes: int = 5, threshold: int = 5):
         """Proactive detection: Checks for 'bursts' of similar error logs."""
         logs = self.query_structured_logs(
-            query_string='{container_name="toy-service"} |= "ERROR"',
+            query_string='{compose_service="toy-service"} |= "ERROR"',
             limit=50
         )
         if isinstance(logs, str): return None
@@ -235,7 +235,7 @@ def gather_evidence(state: AgentState) -> AgentState:
 
     for step in steps:
         # Try structured search
-        logs = log_tool.query_structured_logs(f'{{container_name="toy-service"}} |= "{step}"')
+        logs = log_tool.query_structured_logs(f'{{compose_service="toy-service"}} |= "{step}"')
         if isinstance(logs, list) and logs:
             evidence.append(f"Structured Match for '{step}': Found {len(logs)} occurrences.")
 
@@ -348,9 +348,9 @@ def log_decision(state: AgentState) -> AgentState:
             "success": res.get("success")
         }
         if res.get("success"):
-            print("✅ Execution successful!")
+            print("âœ… Execution successful!")
         else:
-            print(f"❌ Execution failed: {res.get('error')}")
+            print(f"âŒ Execution failed: {res.get('error')}")
     else:
         print("Action skipped or denied.")
 
